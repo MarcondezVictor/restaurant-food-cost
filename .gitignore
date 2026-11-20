@@ -1,0 +1,30 @@
+# dependencies and builds
+node_modules/
+.next/
+out/
+coverage/
+
+# env and secrets
+.env
+.env.*
+!.env.example
+
+# local Claude context (never committed)
+CLAUDE.local.md
+
+# real data: never in this repo (synthetic data lives in supabase/seed and tests/fixtures)
+*.xlsx
+*.xls
+*.zip
+private/
+data/
+!supabase/seed/**
+!tests/fixtures/**
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# os
+.DS_Store
+Thumbs.db
