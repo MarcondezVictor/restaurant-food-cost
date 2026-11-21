@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/* Theme tokens. The default Tailwind palette is turned off, so only these
+   colors exist (AGENTS.md: theme tokens only). R4 grows this into the design
+   system. */
+@theme {
+  --color-*: initial;
+  --color-bg: #0a0a0b;
+  --color-surface: #18181b;
+  --color-border: #3f3f46;
+  --color-fg: #f4f4f5;
+  --color-muted: #a1a1aa;
+  --color-accent: #fbbf24;
+  --color-accent-fg: #0a0a0b;
+  --color-danger: #fca5a5;
+  --color-ok: #86efac;
+}
+
 :root {
   color-scheme: dark;
+  background-color: var(--color-bg);
 }

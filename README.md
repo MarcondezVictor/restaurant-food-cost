@@ -19,9 +19,12 @@ Requirements: Node 24 (`.nvmrc`), Docker running. The Supabase CLI comes with `n
 ```bash
 npm ci
 npx supabase start
+cp .env.example .env.local   # then paste API_URL and PUBLISHABLE_KEY from `npx supabase status`
 npm run seed
 npm run dev
 ```
+
+Sign-in is a 6-digit code sent by e-mail. Locally, e-mails land in Mailpit at http://127.0.0.1:54324.
 
 Demo logins (owner, admin) will be listed here once the seed exists.
 
