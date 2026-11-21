@@ -5,8 +5,10 @@ import { supabaseEnv } from "./env";
 // Supabase client for Server Components, Server Actions and Route Handlers.
 // Create one per request; never share it between requests.
 export async function createClient() {
-  const { url, publishableKey } = supabaseEnv();
+  // cookies() first: it marks the route as request-time, so `next build`
+  // never prerenders it and the build does not need the Supabase env.
   const cookieStore = await cookies();
+  const { url, publishableKey } = supabaseEnv();
 
   return createServerClient(url, publishableKey, {
     cookies: {
