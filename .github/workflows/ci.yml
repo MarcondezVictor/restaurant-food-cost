@@ -9,7 +9,7 @@ jobs:
   no-real-data:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Block data files outside synthetic folders
         run: |
           found=$(git ls-files \
@@ -24,8 +24,8 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -35,9 +35,21 @@ jobs:
   db-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+      - uses: actions/checkout@v7
+      - uses: supabase/setup-cli@v3
         with:
-          version: latest
-      - run: supabase start
+          # Same version as the "supabase" devDependency in package.json; a fixed
+          # version also avoids the GitHub API rate limit hit when resolving "latest".
+          version: 3.2.0
+      # pgTAP only needs Postgres, so every other service is skipped. The runner
+      # sometimes reports the database port as already in use, so retry once.
+      - name: Start Supabase (database only)
+        run: |
+          EXCLUDE=gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+          if ! supabase start -x "$EXCLUDE"; then
+            echo "::warning::supabase start failed; stopping and retrying once"
+            supabase stop --no-backup || true
+            sleep 5
+            supabase start -x "$EXCLUDE"
+          fi
       - run: supabase test db
