@@ -60,4 +60,4 @@ Work is split into issues, one PR per issue, following [`AGENTS.md`](AGENTS.md).
 
 ## License
 
-To be decided.
+All rights reserved. The code is public for portfolio purposes.
