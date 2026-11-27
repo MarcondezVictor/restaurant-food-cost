@@ -62,4 +62,4 @@ Built with an AI-assisted workflow: I define the requirements, architecture deci
 
 ## License
 
-To be decided.
+All rights reserved. The code is public for portfolio purposes.
