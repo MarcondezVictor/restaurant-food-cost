@@ -39,6 +39,8 @@ Each one has a short ADR in [`docs/adr/`](docs/adr/).
 
 ## Tests
 
+Row Level Security is covered by pgTAP tests in [`supabase/tests/`](supabase/tests/): each policy is checked for who can and who cannot read or write, including isolation between companies.
+
 ```bash
 npm run verify          # lint, types, format, unit tests, build
 npx supabase test db    # pgTAP: who can and who cannot
