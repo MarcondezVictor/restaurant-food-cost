@@ -39,6 +39,8 @@ Each one has a short ADR in [`docs/adr/`](docs/adr/).
 
 ## Tests
 
+Row Level Security is covered by pgTAP tests in [`supabase/tests/`](supabase/tests/): each policy is checked for who can and who cannot read or write, including isolation between companies.
+
 ```bash
 npm run verify          # lint, types, format, unit tests, build
 npx supabase test db    # pgTAP: who can and who cannot
@@ -46,7 +48,7 @@ npx supabase test db    # pgTAP: who can and who cannot
 
 ## How it is built
 
-Work is split into issues, one PR per issue, following [`AGENTS.md`](AGENTS.md). AI agents (Claude) plan, implement, and review in separate sessions with fixed roles; every PR is reviewed and merged by a human.
+Built with an AI-assisted workflow: I define the requirements, architecture decisions ([ADRs](docs/adr/)) and acceptance criteria; Claude implements under the rules in [`AGENTS.md`](AGENTS.md). Work is split into issues, one PR per issue, and every change goes through CI (lint, types, unit tests, build, pgTAP) and my review before I merge it.
 
 ## Roadmap
 
