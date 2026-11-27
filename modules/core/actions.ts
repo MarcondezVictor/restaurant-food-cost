@@ -6,8 +6,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser, SIGN_IN_PATH } from "@/lib/auth";
+import { checkModule } from "@/lib/modules/guard";
 import { createClient } from "@/lib/supabase/server";
-import { getMyMembership } from "./queries.ts";
 import {
   alreadyMemberMessage,
   checkCode,
@@ -135,16 +135,11 @@ export async function createInvite(
     return fail("Escolha o papel da pessoa na lista.");
   }
 
-  const user = await requireUser();
-  const membership = await getMyMembership(user.id, companyId);
-  if (!membership) {
-    return fail("Você não faz parte dessa empresa. Volte à tela inicial.");
-  }
-  const allowed = rolesInviterCanGrant(membership.role);
-  if (allowed.length === 0) {
-    return fail("Só o dono ou o administrador convida pessoas.");
-  }
-  if (!allowed.includes(role)) {
+  const access = await checkModule("core.invites", companyId);
+  if (!access.ok) return fail(access.result.message);
+
+  // Who may grant which role stays a core rule (only an owner invites an owner).
+  if (!rolesInviterCanGrant(access.membership.role).includes(role)) {
     return fail("Só o dono convida outro dono. Escolha outro papel.");
   }
 
@@ -191,20 +186,8 @@ export async function revokeInvite(
     };
   }
 
-  const user = await requireUser();
-  const membership = await getMyMembership(user.id, companyId);
-  if (!membership) {
-    return {
-      status: "error",
-      message: "Você não faz parte dessa empresa. Volte à tela inicial.",
-    };
-  }
-  if (rolesInviterCanGrant(membership.role).length === 0) {
-    return {
-      status: "error",
-      message: "Só o dono ou o administrador revoga convites.",
-    };
-  }
+  const access = await checkModule("core.invites", companyId);
+  if (!access.ok) return access.result;
 
   // RLS still decides the rest: only an owner revokes an owner invite.
   const supabase = await createClient();

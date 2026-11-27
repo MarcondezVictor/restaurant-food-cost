@@ -1,15 +1,12 @@
-import { notFound } from "next/navigation";
-import { requireUser, SIGN_IN_PATH } from "@/lib/auth";
+import { SIGN_IN_PATH } from "@/lib/auth";
+import { WrongRolePage } from "@/lib/modules/AccessPages";
+import { requireModule } from "@/lib/modules/guard";
 import { siteUrl } from "@/lib/site";
 import { InviteForm } from "@/modules/core/components/InviteForm";
 import { PendingInvites } from "@/modules/core/components/PendingInvites";
 import { Screen, TextLink } from "@/modules/core/components/ui";
-import { getMyMembership, getPendingInvites } from "@/modules/core/queries";
-import {
-  inviteShareText,
-  isUuid,
-  rolesInviterCanGrant,
-} from "@/modules/core/rules";
+import { getPendingInvites } from "@/modules/core/queries";
+import { inviteShareText, rolesInviterCanGrant } from "@/modules/core/rules";
 
 export default async function InvitesPage({
   params,
@@ -17,21 +14,12 @@ export default async function InvitesPage({
   params: Promise<{ companyId: string }>;
 }) {
   const { companyId } = await params;
-  if (!isUuid(companyId)) notFound();
+  const access = await requireModule("core.invites", companyId);
+  if (!access.allowed) return <WrongRolePage companyId={companyId} />;
+  const { membership } = access;
 
-  const user = await requireUser();
-  const membership = await getMyMembership(user.id, companyId);
-  if (!membership) notFound();
-
+  // Who may grant which role stays a core rule (only an owner invites an owner).
   const roles = rolesInviterCanGrant(membership.role);
-  if (roles.length === 0) {
-    return (
-      <Screen title="Convidar pessoa">
-        <p>Só o dono ou o administrador convida pessoas.</p>
-        <TextLink href={`/empresa/${companyId}`}>Voltar</TextLink>
-      </Screen>
-    );
-  }
 
   const invites = await getPendingInvites(companyId);
   const signInUrl = `${siteUrl()}${SIGN_IN_PATH}`;
