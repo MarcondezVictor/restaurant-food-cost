@@ -5,24 +5,70 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
+# A new push to a PR cancels the run still going for that PR. Runs on main are
+# never cancelled.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   no-real-data:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - name: Block data files outside synthetic folders
+      # AGENTS.md golden rule 1. Paths come NUL-separated and unquoted, so a
+      # name with an accent or a space cannot slip past the patterns.
+      - name: Block files that may hold real data
         run: |
-          found=$(git ls-files \
-            | grep -Ei '\.(xlsx|xls|csv|xml|zip|pdf|jpg|jpeg|png|heic)$' \
-            | grep -Ev '^(supabase/seed/|tests/fixtures/|public/|docs/img/)' || true)
+          set -euo pipefail
+
+          # Config files allowed by exact path (no blanket exemption by extension).
+          allowed='^(package\.json|package-lock\.json|tsconfig\.json|\.claude/settings\.json|app/favicon\.ico|app/icon\.svg|app/icon\.png|app/apple-icon\.png)$'
+          synthetic='^(supabase/seed/|tests/fixtures/)'
+          images_ok='^(public/|docs/img/|supabase/seed/|tests/fixtures/)'
+          sql_ok='^(supabase/migrations/|supabase/tests/|supabase/seed/|tests/fixtures/)'
+
+          data='\.(xlsx|xls|xlsm|ods|csv|tsv|xml|json|zip|gz|tgz|tar|7z|rar|pdf|docx)$'
+          images='\.(png|jpg|jpeg|webp|svg|ico|heic|heif)$'
+          dumps='\.(dump|backup|bak|sqlite|sqlite3|db)$'
+          envs='(^|/)\.env(\..*)?$'
+
+          found=""
+          while IFS= read -r -d '' path; do
+            lower=$(printf '%s' "$path" | tr '[:upper:]' '[:lower:]')
+            reason=""
+            if [[ "$path" =~ $allowed ]]; then
+              continue
+            elif [[ "$lower" =~ $envs ]] && [[ ! "$lower" =~ (^|/)\.env\.example$ ]]; then
+              reason="environment file: never commit it"
+            elif [[ "$lower" =~ $dumps ]]; then
+              reason="database file, dump or backup: never commit it"
+            elif [[ "$lower" =~ \.sql$ ]] && [[ ! "$path" =~ $sql_ok ]]; then
+              reason="SQL only in supabase/migrations/, supabase/tests/, supabase/seed/ or tests/fixtures/"
+            elif [[ "$lower" =~ $data ]] && [[ ! "$path" =~ $synthetic ]]; then
+              reason="data file only in supabase/seed/ or tests/fixtures/ (synthetic)"
+            elif [[ "$lower" =~ $images ]] && [[ ! "$path" =~ $images_ok ]]; then
+              reason="image only in public/, docs/img/, supabase/seed/ or tests/fixtures/"
+            fi
+            if [ -n "$reason" ]; then
+              found+="  $path -> $reason"$'\n'
+            fi
+          done < <(git -c core.quotepath=off ls-files -z)
+
           if [ -n "$found" ]; then
-            echo "Data files outside synthetic folders:"
-            echo "$found"
+            echo "Files that may hold real data, outside the allowed folders:"
+            printf '%s' "$found"
             exit 1
           fi
+          echo "No data files outside the allowed folders."
 
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -34,6 +80,7 @@ jobs:
 
   db-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: supabase/setup-cli@v3
