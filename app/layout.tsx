@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { COLORS } from "@/components/ui/tokens";
 import "./globals.css";
 
-// Self-hosted by Next.js at build time: no request to Google from the phone.
-const inter = Inter({
-  subsets: ["latin"],
+// Inter from the @fontsource-variable/inter package, latin subset only (it
+// covers Portuguese accents). The build reads it from node_modules, so it
+// needs no network; the phone downloads it from our own server.
+const inter = localFont({
+  src: "../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  weight: "100 900",
+  style: "normal",
   display: "swap",
   variable: "--font-inter",
 });
