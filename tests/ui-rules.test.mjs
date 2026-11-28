@@ -4,6 +4,7 @@ import {
   closesByItself,
   createSubmitGate,
   createTapGate,
+  devUiVisible,
   DATA_STATUSES,
   dismissToast,
   formatQuantity,
@@ -177,4 +178,16 @@ test("every data status has a Portuguese label and a tone", () => {
   assert.equal(STATUS_LABELS.missing, "falta");
   assert.equal(STATUS_TONES.simulated, "warn");
   assert.equal(STATUS_TONES.missing, "danger");
+});
+
+// --- /dev/ui ----------------------------------------------------------------
+
+test("/dev/ui shows in development and hides in production", () => {
+  assert.equal(devUiVisible("development", undefined), true);
+  assert.equal(devUiVisible("test", undefined), true);
+  assert.equal(devUiVisible("production", undefined), false);
+  assert.equal(devUiVisible("production", ""), false);
+  assert.equal(devUiVisible("production", "0"), false);
+  assert.equal(devUiVisible("production", "true"), false);
+  assert.equal(devUiVisible("production", "1"), true); // the demo only
 });

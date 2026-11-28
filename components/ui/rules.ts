@@ -214,3 +214,14 @@ export const STATUS_TONES: Record<DataStatus, StatusTone> = {
   simulated: "warn",
   missing: "danger",
 };
+
+// --- /dev/ui: the component gallery -----------------------------------------
+
+// Shown in development. In a production build only when
+// NEXT_PUBLIC_SHOW_DEV_UI=1, which only the demo (#23) turns on.
+export function devUiVisible(
+  nodeEnv: string | undefined,
+  showDevUi: string | undefined,
+): boolean {
+  return nodeEnv !== "production" || showDevUi === "1";
+}
