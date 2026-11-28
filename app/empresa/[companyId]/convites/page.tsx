@@ -34,7 +34,7 @@ export default async function InvitesPage({
       <InviteForm companyId={companyId} roles={roles} />
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold">Convites pendentes</h2>
+        <h2 className="text-subtitle font-semibold">Convites pendentes</h2>
         <PendingInvites
           companyId={companyId}
           invites={invites.map((invite) => ({

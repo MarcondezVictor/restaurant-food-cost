@@ -44,7 +44,7 @@ export function InviteForm({
           {roles.map((role) => (
             <label
               key={`${role}-${formKey}`}
-              className="flex min-h-11 items-center gap-2 rounded-lg border border-border px-3 has-[:checked]:border-accent"
+              className="flex min-h-tap items-center gap-2 rounded-control border border-border px-3 has-[:checked]:border-accent"
             >
               <input
                 type="radio"

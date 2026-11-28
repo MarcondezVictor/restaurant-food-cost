@@ -29,7 +29,7 @@ export function CodeForm({ email }: { email: string }) {
             required
             autoFocus
             placeholder="123456"
-            className={`${inputClass} text-center text-2xl tracking-[0.4em]`}
+            className={`${inputClass} text-center text-title tracking-[0.4em]`}
           />
         </label>
         <Message result={result} />

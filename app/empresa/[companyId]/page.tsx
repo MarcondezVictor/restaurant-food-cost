@@ -20,7 +20,7 @@ export default async function CompanyHome({
 
   return (
     <Screen title={membership.companyName}>
-      <p className="text-xl">{youAre(membership.role)}</p>
+      <p className="text-subtitle">{youAre(membership.role)}</p>
       {modules.length === 0 ? (
         <p>Por enquanto o app é só do dono e do administrador.</p>
       ) : (

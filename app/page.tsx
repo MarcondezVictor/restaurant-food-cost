@@ -43,7 +43,7 @@ export default async function Home() {
           <li key={m.companyId}>
             <Link
               href={`/empresa/${m.companyId}`}
-              className="flex min-h-11 flex-col rounded-lg border border-border bg-surface p-4"
+              className="flex min-h-tap flex-col rounded-card border border-border bg-surface p-4"
             >
               <span className="font-semibold">{m.companyName}</span>
               <span className="text-muted">{youAre(m.role)}</span>

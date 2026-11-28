@@ -1,19 +1,53 @@
 @import "tailwindcss";
 
-/* Theme tokens. The default Tailwind palette is turned off, so only these
-   colors exist (AGENTS.md: theme tokens only). R4 grows this into the design
-   system. */
+/* Design system tokens (R4). Tailwind's default colors, type sizes and radii
+   are turned off, so only these exist (AGENTS.md: theme tokens only).
+   components/ui/tokens.ts mirrors the colors; a test keeps the two equal. */
 @theme {
+  /* Colors */
   --color-*: initial;
   --color-bg: #0a0a0b;
   --color-surface: #18181b;
-  --color-border: #3f3f46;
+  --color-border: #3f3f46; /* decorative only: card outlines, dividers */
+  --color-control: #71717a; /* outline of anything you tap: fields, chips, +/- */
   --color-fg: #f4f4f5;
   --color-muted: #a1a1aa;
   --color-accent: #fbbf24;
   --color-accent-fg: #0a0a0b;
-  --color-danger: #fca5a5;
   --color-ok: #86efac;
+  --color-warn: #fdba74;
+  --color-danger: #fca5a5;
+
+  /* Type scale in rem: every size follows the root font size, so a future
+     "texto grande" setting scales every screen through one value.
+     16 px is the smallest body text; caption (14 px) is for captions only. */
+  --text-*: initial;
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.25rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-subtitle: 1.25rem;
+  --text-subtitle--line-height: 1.75rem;
+  --text-title: 1.75rem;
+  --text-title--line-height: 2.25rem;
+  --text-number: 2.25rem;
+  --text-number--line-height: 2.5rem;
+
+  /* Spacing: Tailwind's scale is one base step (--spacing, 0.25rem). Named
+     sizes for the two that carry a rule. */
+  --spacing-tap: 2.75rem; /* 44 px: smallest height of anything you tap */
+  --spacing-gutter: 1rem; /* 16 px: screen side margin */
+
+  /* Radius */
+  --radius-*: initial;
+  --radius-control: 0.5rem; /* buttons, inputs, chips */
+  --radius-card: 0.75rem; /* cards, dialogs, toasts */
+  --radius-full: 9999px; /* badges, round buttons */
+}
+
+/* Inter comes from next/font in app/layout.tsx as --font-inter. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
