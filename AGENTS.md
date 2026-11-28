@@ -50,6 +50,10 @@ docs/                   product.md, module-plan.md, adr/
 
 - A module touches only its own tables. To use another module, call its exported functions.
 - Changes to `lib/` or `components/ui/` go in their own PR, with their own reason.
+- Imports:
+  - Relative imports carry the file extension (`./rules.ts`, `./ui.tsx`).
+  - Imports across folders use the `@/` alias, without extension (`@/lib/auth`).
+  - Pure files (`rules.ts`, `types.ts`, `lib/modules/access.ts`) import only by relative path, so `node --test` can load them.
 
 ## 6. Database and security
 

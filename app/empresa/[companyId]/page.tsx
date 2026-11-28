@@ -1,39 +1,42 @@
-import { notFound } from "next/navigation";
-import { requireUser } from "@/lib/auth";
+import Link from "next/link";
+import { modulesFor, moduleHref } from "@/lib/modules/access";
+import { requireMember } from "@/lib/modules/guard";
 import { SignOutButton } from "@/modules/core/components/SignOutButton";
 import { buttonClass, Screen, TextLink } from "@/modules/core/components/ui";
 import { getMyMemberships } from "@/modules/core/queries";
-import { canInvite, isUuid, youAre } from "@/modules/core/rules";
-import Link from "next/link";
+import { youAre } from "@/modules/core/rules";
 
+// Home per role, built from the module registry. No generic menu.
 export default async function CompanyHome({
   params,
 }: {
   params: Promise<{ companyId: string }>;
 }) {
   const { companyId } = await params;
-  if (!isUuid(companyId)) notFound();
+  const { user, membership } = await requireMember(companyId);
 
-  const user = await requireUser();
-  const memberships = await getMyMemberships(user.id);
-  const membership = memberships.find((m) => m.companyId === companyId);
-  if (!membership) notFound();
+  const modules = modulesFor(membership.role);
+  const hasOtherCompanies = (await getMyMemberships(user.id)).length > 1;
 
   return (
     <Screen title={membership.companyName}>
       <p className="text-xl">{youAre(membership.role)}</p>
-      <p className="text-muted">
-        Esta é a sua tela inicial. Custos, notas e fichas aparecem aqui nas
-        próximas etapas.
-      </p>
-      {canInvite(membership.role) && (
-        <Link href={`/empresa/${companyId}/convites`} className={buttonClass}>
-          Convidar pessoa
-        </Link>
+      {modules.length === 0 ? (
+        <p>Por enquanto o app é só do dono e do administrador.</p>
+      ) : (
+        <nav className="flex flex-col gap-3">
+          {modules.map((entry) => (
+            <Link
+              key={entry.id}
+              href={moduleHref(entry, companyId)}
+              className={buttonClass}
+            >
+              {entry.name}
+            </Link>
+          ))}
+        </nav>
       )}
-      {memberships.length > 1 && (
-        <TextLink href="/">Trocar de empresa</TextLink>
-      )}
+      {hasOtherCompanies && <TextLink href="/">Trocar de empresa</TextLink>}
       <SignOutButton />
     </Screen>
   );
