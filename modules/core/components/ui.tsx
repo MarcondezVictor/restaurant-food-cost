@@ -4,13 +4,13 @@ import Link from "next/link";
 import type { ActionResult } from "../types.ts";
 
 export const buttonClass =
-  "inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-accent px-4 text-base font-semibold text-accent-fg disabled:opacity-60";
+  "inline-flex min-h-tap w-full items-center justify-center rounded-control bg-accent px-4 text-body font-semibold text-accent-fg disabled:opacity-60";
 
 export const secondaryButtonClass =
-  "inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-border px-4 text-base text-fg disabled:opacity-60";
+  "inline-flex min-h-tap w-full items-center justify-center rounded-control border border-border px-4 text-body text-fg disabled:opacity-60";
 
 export const inputClass =
-  "min-h-11 w-full rounded-lg border border-border bg-surface px-3 text-base text-fg placeholder:text-muted";
+  "min-h-tap w-full rounded-control border border-border bg-surface px-3 text-body text-fg placeholder:text-muted";
 
 export function Screen({
   title,
@@ -21,7 +21,7 @@ export function Screen({
 }) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-4 py-8">
-      <h1 className="text-2xl font-semibold">{title}</h1>
+      <h1 className="text-title font-semibold">{title}</h1>
       {children}
     </main>
   );
@@ -34,8 +34,8 @@ export function Message({ result }: { result: ActionResult }) {
       role={result.status === "error" ? "alert" : "status"}
       className={
         result.status === "error"
-          ? "rounded-lg border border-danger p-3 text-danger"
-          : "rounded-lg border border-ok p-3 text-ok"
+          ? "rounded-card border border-danger p-3 text-danger"
+          : "rounded-card border border-ok p-3 text-ok"
       }
     >
       {result.message}
@@ -53,7 +53,7 @@ export function TextLink({
   return (
     <Link
       href={href}
-      className="inline-flex min-h-11 items-center text-base text-accent underline"
+      className="inline-flex min-h-tap items-center text-body text-accent underline"
     >
       {children}
     </Link>
