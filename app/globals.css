@@ -8,7 +8,8 @@
   --color-*: initial;
   --color-bg: #0a0a0b;
   --color-surface: #18181b;
-  --color-border: #3f3f46;
+  --color-border: #3f3f46; /* decorative only: card outlines, dividers */
+  --color-control: #71717a; /* outline of anything you tap: fields, chips, +/- */
   --color-fg: #f4f4f5;
   --color-muted: #a1a1aa;
   --color-accent: #fbbf24;

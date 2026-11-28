@@ -11,8 +11,9 @@
     "format:check": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
-    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build",
-    "seed": "node -e \"process.exit(0)\""
+    "verify": "npm run lint && npm run format:check && npm run check:colors && npm run typecheck && npm run test && npm run build",
+    "seed": "node -e \"process.exit(0)\"",
+    "check:colors": "node scripts/check-colors.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

@@ -6,7 +6,8 @@
 export const COLORS = {
   bg: "#0a0a0b",
   surface: "#18181b",
-  border: "#3f3f46",
+  border: "#3f3f46", // decorative only: card outlines, dividers
+  control: "#71717a", // outline of anything you tap: fields, chips, +/-
   fg: "#f4f4f5",
   muted: "#a1a1aa",
   accent: "#fbbf24",
